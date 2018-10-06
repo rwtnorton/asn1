@@ -5,7 +5,9 @@
             [clojure.pprint  :refer [pprint]])
   (:import (java.io RandomAccessFile)
            (java.nio ByteBuffer)
-           (javax.xml.bind DatatypeConverter)))
+           (javax.xml.bind DatatypeConverter)
+           (org.bouncycastle.asn1 ASN1InputStream)
+           (org.bouncycastle.asn1.util ASN1Dump)))
 
 (defn base64-extract
   [path]
@@ -22,7 +24,16 @@
 
 (defn parse-asn1
   [bb]
-  ::nothing-parsed)
+  ;; Not really sure.
+  bb)
+
+(defn cheat
+  [path]
+  (with-open [ais (ASN1InputStream. (io/input-stream path))]
+    (while (pos? (.available ais))
+      (let [o (.readObject ais)
+            s (ASN1Dump/dumpAsString o true)]
+        (println s)))))
 
 (defn -main
   [& args]
